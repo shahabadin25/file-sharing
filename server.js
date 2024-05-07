@@ -3,6 +3,9 @@ require('dotenv').config();
 const express = require('express');
 const ConnectDb = require('./config/db');
 const path=require('path');
+consr cors=require('cors');
+
+
 //Create Express App
 const app = express();
 
@@ -10,7 +13,9 @@ const app = express();
 ConnectDb();
 
 //<======================Middlware=====================>//
-
+const corsOption={
+    origin:process.env.ALLOWED_CLIENT.split(',')
+}
 
 //<=================template engine=====================>//
 app.set('views',path.join(__dirname,'/views'));
@@ -26,7 +31,7 @@ app.use('/files/download',require('./routes/download'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cors(corsOptions));
 
 const filedb=require('./models/file');
 
