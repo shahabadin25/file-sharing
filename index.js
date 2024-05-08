@@ -33,7 +33,7 @@ app.use ('/files',require('./routes/show'));
 app.use('/files/download',require('./routes/download'));
 app.get("/",(req,res)=>{
 
-    return res.send("<h1>Welcome to Adin FileShare😎</h1>")
+    return res.send("<h1>Welcome to Adina FileShare😎</h1>")
 })
 
 
