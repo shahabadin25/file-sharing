@@ -17,7 +17,9 @@ const corsOption={
     origin:process.env.ALLOWED_CLIENT.split(',')
 }
 app.use(cors(corsOption));
-
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 //<=================template engine=====================>//
 app.set('views',path.join(__dirname,'/views'));
 app.set('view engine','ejs');
@@ -29,9 +31,12 @@ app.set('view engine','ejs');
 app.use('/api/files', require('./routes/files'))
 app.use ('/files',require('./routes/show'));
 app.use('/files/download',require('./routes/download'));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.get("/",(req,res)=>{
+
+    return res.send("<h1>Welcome to Adin FileShare😎</h1>")
+})
+
+
 
 const filedb=require('./models/file');
 
