@@ -4,6 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const File = require('../models/file');
 const { v4: uuid4 } = require('uuid');
+const emailValidator= require("email-validator");
 
 // Middleware for parsing JSON bodies
 router.use(express.json());
@@ -111,7 +112,7 @@ router.post('/send',async (req,res)=>{
 
         // Send email
         const sendMail = require('../services/emailService');
-        sendMail({
+        sendMail(req,{
             from: emailFrom,
             to: emailTo,
             subject: 'inShare File sharing',
