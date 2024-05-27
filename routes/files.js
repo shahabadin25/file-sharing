@@ -5,6 +5,7 @@ const path = require('path');
 const File = require('../models/file');
 const { v4: uuid4 } = require('uuid');
 const emailValidator= require("email-validator");
+const sendMail=require('../services/emailService')
 
 // Middleware for parsing JSON bodies
 router.use(express.json());
@@ -16,7 +17,7 @@ let storage=multer.diskStorage({
         //extname gives the extension of any file
         cb(null,uniqueName);
     }
-})
+});
 
 let upload=multer({
     storage,
@@ -75,12 +76,18 @@ router.get('/:uuid', async (req, res) => {
        return  res.json({files :`${process.env.APP_BASE_URL}/files/${response.uuid}}`});
        //http://localhost:3000/files/22332hskjfdhs-4342jfhsdj
 
-    })
+    });
 
-})
+});
 
 router.post('/send',async (req,res)=>{
     const{uuid,emailTo,emailFrom}=req.body;
+
+    // Log the received values
+    console.log('Received values:');
+    console.log('uuid:', uuid);
+    console.log('emailTo:', emailTo);
+    console.log('emailFrom:', emailFrom);
     //validate request
     if(!uuid || !emailTo ||!emailFrom)
     {
@@ -108,11 +115,11 @@ router.post('/send',async (req,res)=>{
         // Update file sender and receiver
         file.sender = emailFrom;
         file.receiver = emailTo;
-        const response = await file.save();
+        await file.save();
 
         // Send email
-        const sendMail = require('../services/emailService');
-        sendMail(req,{
+        
+        await sendMail(req,{
             from: emailFrom,
             to: emailTo,
             subject: 'inShare File sharing',

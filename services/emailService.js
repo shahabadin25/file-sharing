@@ -6,8 +6,17 @@ const emailValidator=require('email-validator');
 
 async function sendMail({ from, to, subject, text, html }) {
     // Validate the 'to' email address
-    if (emailValidator.validate(to,from)) {
-        // Valid email address, proceed with sending the email
+    if (!emailValidator.validate(to)) {
+        console.log(`Invalid recipient email: ${to}`);
+        throw new Error('Invalid recipient email');
+    }
+
+    if (!emailValidator.validate(from)) {
+        console.log(`Invalid sender email: ${from}`);
+        throw new Error('Invalid sender email');
+    }
+        
+        
         try {
             let transporter = nodeMailer.createTransport({
                 host: process.env.SMTP_HOST,
@@ -31,21 +40,8 @@ async function sendMail({ from, to, subject, text, html }) {
             return info; // Return info object if needed
         } catch (error) {
             console.log('Error occurred while sending email:', error);
-            //throw error; // Throw error for error handling in the caller
-            const status=422;
-            const message=error.message;//captures the error message
-                error={
-                status,
-                message
-            };
-            next(error);//calls the error middleware
+            throw new Error('Error occurred while sending email');
         }
-    } else {
-        // Invalid email address, throw error
-        const error = new Error('Invalid Email'); // Create a new error object
-        error.status = 422;
-        next(error); // Pass the error to the error handling middleware
-}
-}
-
-module.exports = sendMail;
+    }
+    
+    module.exports = sendMail;
