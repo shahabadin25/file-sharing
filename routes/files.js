@@ -5,7 +5,8 @@ const path = require('path');
 const File = require('../models/file');
 const { v4: uuid4 } = require('uuid');
 const emailValidator= require("email-validator");
-const sendMail=require('../services/emailService')
+const sendMail=require('../services/emailService');
+const emailTemplate=require('../services/emailTemplate');
 
 // Middleware for parsing JSON bodies
 router.use(express.json());
@@ -119,12 +120,12 @@ router.post('/send',async (req,res)=>{
 
         // Send email
         
-        await sendMail(req,{
+        await sendMail({
             from: emailFrom,
             to: emailTo,
             subject: 'inShare File sharing',
             text: `${emailFrom} shared a file with you`,
-            html: require('../services/emailTemplate')({
+            html: emailTemplate({
                 emailFrom: emailFrom,
                 download: `${process.env.APP_BASE_URL}/files/${file.uuid}`,
                 size: parseInt(file.size / 1000) + ' kb',
